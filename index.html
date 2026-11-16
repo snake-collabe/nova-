@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090817"><meta name="description" content="NOVA AI — assistants personnels hors ligne">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg">
+<title>NOVA AI</title>
+<style>
+:root{--bg:#090817;--panel:#131229;--panel2:#1b1935;--cyan:#4deaff;--pink:#ff4fd8;--muted:#aaa8c5;--line:#343052}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% 0%,#25204b 0,transparent 45%),var(--bg);color:#f6f3ff;font:15px system-ui,-apple-system,sans-serif;min-height:100vh}
+header{position:sticky;top:0;z-index:3;background:#090817eF;border-bottom:1px solid var(--line);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px)}
+.brand{font-weight:900;letter-spacing:3px;font-size:21px;text-shadow:0 0 14px var(--cyan)}.brand span{color:var(--pink)}button,.tab{border:1px solid #454066;background:var(--panel2);color:#fff;border-radius:12px;padding:10px 13px;font:inherit}button:active{transform:scale(.98)}button.primary{background:linear-gradient(100deg,#145b78,#6b236b);border-color:var(--cyan)}button.danger{border-color:#9a365f;color:#ff9dcf}
+nav{display:flex;gap:7px;overflow:auto;padding:10px 12px;border-bottom:1px solid var(--line)}.tab{white-space:nowrap;padding:8px 12px;color:var(--muted)}.tab.active{color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 12px #4deaff22}
+main{max-width:900px;margin:auto;padding:18px 14px 100px}.hero{padding:22px;border:1px solid #3e3867;border-radius:18px;background:linear-gradient(135deg,#171531,#111022);box-shadow:0 0 30px #6d43b322}.eyebrow{color:var(--cyan);letter-spacing:2px;font-size:11px;font-weight:800}.hero h1{margin:8px 0;font-size:27px}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:15px}.card h3{margin:0 0 7px}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.between{display:flex;justify-content:space-between;gap:10px;align-items:center}.field{width:100%;margin:8px 0 12px;padding:12px;border-radius:11px;border:1px solid var(--line);background:#0d0c1d;color:white;font:inherit}textarea.field{min-height:100px;resize:vertical}.small{font-size:12px;color:var(--muted)}.hidden{display:none!important}.chatbox{height:42vh;min-height:230px;overflow:auto;padding:12px;background:#0d0c1d;border:1px solid var(--line);border-radius:14px;margin:12px 0}.bubble{padding:10px 12px;border-radius:13px;margin:8px 0;max-width:90%;white-space:pre-wrap}.user{background:#25365b;margin-left:auto}.ai{background:#26213d;border:1px solid #4c3e70}.editor{font-family:ui-monospace,monospace;min-height:220px}.preview{width:100%;height:260px;background:white;border:0;border-radius:10px}.pill{font-size:11px;border:1px solid #4deaff66;color:var(--cyan);border-radius:30px;padding:4px 8px}.status{padding:10px 12px;border-radius:10px;background:#0d0c1d;border:1px solid var(--line);font-size:13px;white-space:pre-wrap}.status.ok{border-color:#267d68;color:#8df3cf}.status.warn{border-color:#9a7536;color:#ffd58a}.status.err{border-color:#9a365f;color:#ff9dcf}
+footer{position:fixed;bottom:0;left:0;right:0;background:#090817ee;border-top:1px solid var(--line);padding:9px 14px calc(9px + env(safe-area-inset-bottom));text-align:center;color:var(--muted);font-size:11px;backdrop-filter:blur(12px)}
+</style></head>
+<body>
+<header><div class="brand">NOVA <span>AI</span></div><span class="pill">LOCAL WORKSPACE</span></header>
+<nav id="nav">
+<button class="tab active" data-page="home">Accueil</button><button class="tab" data-page="assistants">Assistants</button><button class="tab" data-page="chat">Discussion</button><button class="tab" data-page="engine">Moteur IA</button><button class="tab" data-page="editor">Éditeur HTML</button><button class="tab" data-page="history">Historique</button>
+</nav>
+<main>
+<section id="home" class="page">
+<div class="hero"><div class="eyebrow">TON ESPACE IA PERSONNEL</div><h1>Bienvenue dans NOVA.</h1><p class="muted">Tes assistants, tes projets et tes fichiers, réunis dans une interface conçue pour rester sur ton appareil.</p><div class="row"><button class="primary" onclick="showPage('assistants')">Créer un assistant</button><button onclick="showPage('editor')">Ouvrir l'éditeur</button></div></div>
+<div class="grid"><div class="card"><div class="eyebrow">ASSISTANTS</div><h2 id="countA">0</h2><span class="small">Profils enregistrés</span></div><div class="card"><div class="eyebrow">CONVERSATIONS</div><h2 id="countH">0</h2><span class="small">Échanges conservés</span></div><div class="card"><div class="eyebrow">MODE</div><h2>Hors ligne</h2><span class="small">Interface et données locales</span></div></div>
+<div class="card" style="margin-top:14px"><h3>À savoir</h3><p class="muted">Cette version est le socle de NOVA AI. Les assistants et leur mémoire sont enregistrés sur cet appareil. Le moteur de langage local n'est pas encore connecté : les réponses de démonstration sont clairement signalées.</p></div>
+</section>
+<section id="assistants" class="page hidden">
+<div class="between"><div><div class="eyebrow">PERSONNALISATION</div><h2>Mes assistants</h2></div><button class="primary" onclick="newAssistant()">＋ Nouveau</button></div>
+<div id="assistantList" class="grid"></div>
+<div id="assistantForm" class="card hidden" style="margin-top:14px"><h3 id="formTitle">Créer un assistant</h3><input id="aName" class="field" placeholder="Nom de l'assistant"><textarea id="aPrompt" class="field" placeholder="Personnalité et instructions"></textarea><div class="row"><button class="primary" onclick="saveAssistant()">Enregistrer</button><button onclick="closeForm()">Annuler</button></div></div>
+</section>
+<section id="chat" class="page hidden">
+<div class="eyebrow">CONVERSATION</div><h2>Discussion</h2><select id="chatAssistant" class="field"></select><div id="chatbox" class="chatbox"><div class="small">Choisis un assistant et envoie un message pour commencer.</div></div>
+<textarea id="message" class="field" rows="2" placeholder="Écris ton message…"></textarea><div class="row"><button class="primary" onclick="sendMessage()">Envoyer</button><button onclick="clearChat()">Effacer cette discussion</button></div><p class="small">Mode démonstration : aucune vraie IA n'est connectée dans cette version.</p>
+</section>
+
+<section id="engine" class="page hidden">
+<div class="eyebrow">INFÉRENCE LOCALE · WEBGPU</div>
+<h2>Moteur IA REAI</h2>
+<div class="card">
+  <div class="between"><h3>État du moteur</h3><span id="engineBadge" class="pill">Non initialisé</span></div>
+  <div id="engineStatus" class="status warn">Le moteur n'est pas chargé. Une connexion Internet est nécessaire pour récupérer le runtime Wllama lors de la première initialisation.</div>
+  <p class="small">Profil prudent iPhone SE 2020 : GGUF ≤ 500 Mio, contexte 512 tokens, 4 couches GPU. Le fonctionnement GPU dépend de la version d’iOS/Safari et du pilote WebGPU.</p>
+  <label class="small" for="ggufFile">Modèle GGUF local (≤ 500 Mio)</label>
+  <input id="ggufFile" class="field" type="file" accept=".gguf,application/octet-stream">
+  <div class="row">
+    <button class="primary" id="loadModelBtn" onclick="loadLocalModel()">Charger le modèle GPU</button>
+    <button id="unloadModelBtn" onclick="unloadLocalModel()" disabled>Décharger</button>
+  </div>
+  <p class="small">Le fichier GGUF est lu depuis l’iPhone. Il n’est pas téléversé vers un serveur. Après fermeture de Safari, il peut être nécessaire de le sélectionner à nouveau.</p>
+</div>
+<div class="card" style="margin-top:12px">
+  <h3>Réglages mémoire</h3>
+  <label class="small" for="contextSize">Contexte</label>
+  <select id="contextSize" class="field"><option value="512" selected>512 tokens (recommandé)</option><option value="1024">1024 tokens (plus gourmand)</option></select>
+  <label class="small" for="gpuLayers">Couches GPU</label>
+  <select id="gpuLayers" class="field"><option value="4" selected>4 (départ prudent)</option><option value="2">2 (plus prudent)</option><option value="6">6 (plus gourmand)</option></select>
+  <p class="small">Le nombre de couches GPU est une demande adressée à Wllama, pas une garantie de stabilité ni de mémoire disponible.</p>
+</div>
+<div class="card" style="margin-top:12px">
+  <h3>Diagnostic WebGPU</h3>
+  <button onclick="checkGPU()">Vérifier WebGPU</button>
+  <div id="gpuDiagnostic" class="status" style="margin-top:10px">Diagnostic non effectué.</div>
+</div>
+</section>
+
+<section id="editor" class="page hidden">
+<div class="eyebrow">ATELIER WEB</div><h2>Éditeur HTML</h2><div class="row"><button onclick="document.getElementById('htmlFile').click()">Importer un fichier</button><button class="primary" onclick="downloadHTML()">Exporter HTML</button><button onclick="renderHTML()">Actualiser l'aperçu</button></div><input id="htmlFile" type="file" accept=".html,.htm,text/html" class="hidden"><textarea id="htmlCode" class="field editor" spellcheck="false"><!doctype html>
+<html><head><meta charset="utf-8"><title>Ma page</title></head>
+<body><h1>Bonjour NOVA !</h1><p>Modifie ce code et actualise l'aperçu.</p></body></html></textarea><h3>Aperçu</h3><iframe id="preview" class="preview" sandbox="allow-scripts"></iframe>
+</section>
+<section id="history" class="page hidden"><div class="eyebrow">ARCHIVES LOCALES</div><h2>Historique</h2><div id="historyList"></div><button class="danger" onclick="clearHistory()">Effacer tout l'historique</button></section>
+</main><footer>NOVA AI · Données conservées localement sur cet appareil</footer>
+<script>
+const $=id=>document.getElementById(id);
+let assistants=JSON.parse(localStorage.getItem('nova_assistants')||'[]');
+let history=JSON.parse(localStorage.getItem('nova_history')||'[]');
+let currentEdit=null;
+function persist(){localStorage.setItem('nova_assistants',JSON.stringify(assistants));localStorage.setItem('nova_history',JSON.stringify(history));updateHome()}
+function updateHome(){$('countA').textContent=assistants.length;$('countH').textContent=history.length}
+function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(p).classList.remove('hidden');document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.page===p));if(p==='assistants')drawAssistants();if(p==='chat')fillSelect();if(p==='history')drawHistory()}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+function newAssistant(){currentEdit=null;$('formTitle').textContent='Créer un assistant';$('aName').value='';$('aPrompt').value='';$('assistantForm').classList.remove('hidden')}
+function editAssistant(id){let a=assistants.find(x=>x.id===id);currentEdit=id;$('formTitle').textContent='Modifier '+a.name;$('aName').value=a.name;$('aPrompt').value=a.prompt;$('assistantForm').classList.remove('hidden')}
+function closeForm(){$('assistantForm').classList.add('hidden')}
+function saveAssistant(){let name=$('aName').value.trim();if(!name){alert('Ajoute un nom.');return}let prompt=$('aPrompt').value.trim();if(currentEdit){let a=assistants.find(x=>x.id===currentEdit);a.name=name;a.prompt=prompt}else assistants.push({id:crypto.randomUUID(),name,prompt,memory:[]});persist();closeForm();drawAssistants()}
+function deleteAssistant(id){if(confirm('Supprimer cet assistant et sa mémoire ?')){assistants=assistants.filter(a=>a.id!==id);persist();drawAssistants()}}
+function drawAssistants(){$('assistantList').innerHTML=assistants.map(a=>`<div class="card"><div class="between"><h3>${esc(a.name)}</h3><span class="pill">${a.memory.length} mémoire(s)</span></div><p class="small">${esc(a.prompt||'Aucune instruction définie')}</p><div class="row"><button onclick="editAssistant('${a.id}')">Modifier</button><button onclick="openChat('${a.id}')">Discuter</button><button class="danger" onclick="deleteAssistant('${a.id}')">Supprimer</button></div></div>`).join('')||'<div class="card muted">Aucun assistant. Crée ton premier profil.</div>'}
+function fillSelect(){ $('chatAssistant').innerHTML=assistants.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join('')||'<option value="">Crée d’abord un assistant</option>'}
+function openChat(id){showPage('chat');$('chatAssistant').value=id;renderChat()}
+function renderChat(){let id=$('chatAssistant').value;let a=assistants.find(x=>x.id===id);$('chatbox').innerHTML=a?(a.memory.map(m=>`<div class="bubble ${m.role==='user'?'user':'ai'}">${esc(m.text)}</div>`).join('')||'<div class="small">Nouvelle conversation.</div>'):'<div class="small">Crée un assistant pour discuter.</div>';$('chatbox').scrollTop=$('chatbox').scrollHeight}
+$('chatAssistant').addEventListener('change',renderChat);
+async function sendMessage(){let a=assistants.find(x=>x.id===$('chatAssistant').value),msg=$('message').value.trim();if(!a||!msg)return;if(!reaiWllama){alert('Charge d’abord un modèle dans l’onglet Moteur IA.');return}a.memory.push({role:'user',text:msg});history.unshift({assistant:a.name,text:msg,date:new Date().toLocaleString('fr-FR')});$('message').value='';persist();renderChat();const wait={role:'ai',text:'REAI réfléchit…'};a.memory.push(wait);persist();renderChat();try{const messages=[{role:'system',content:REAI_SYSTEM+'\\n\\nInstructions de cet assistant : '+(a.prompt||'Aucune instruction supplémentaire.')}];for(const m of a.memory.slice(-10,-2)){if(m.role==='user')messages.push({role:'user',content:m.text});else if(m.role==='ai'&&!m.text.startsWith('REAI réfléchit'))messages.push({role:'assistant',content:m.text})}messages.push({role:'user',content:msg});const out=await reaiWllama.createChatCompletion({messages,max_tokens:160,temperature:0.2,top_p:0.9});wait.text=out?.choices?.[0]?.message?.content||'Le modèle n’a retourné aucun texte.'}catch(e){wait.text='Erreur moteur : '+(e?.message||String(e))}persist();renderChat()}
+function clearChat(){let a=assistants.find(x=>x.id===$('chatAssistant').value);if(a&&confirm('Effacer la mémoire de conversation de cet assistant ?')){a.memory=[];persist();renderChat()}}
+function drawHistory(){$('historyList').innerHTML=history.map(h=>`<div class="card" style="margin:8px 0"><div class="between"><b>${esc(h.assistant)}</b><span class="small">${esc(h.date)}</span></div><p>${esc(h.text)}</p></div>`).join('')||'<p class="muted">Aucun échange enregistré.</p>'}
+function clearHistory(){if(confirm('Effacer tout l’historique ?')){history=[];persist();drawHistory()}}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+$('htmlFile').addEventListener('change',async e=>{let f=e.target.files[0];if(f)$('htmlCode').value=await f.text()});
+function renderHTML(){$('preview').srcdoc=$('htmlCode').value}
+function downloadHTML(){let blob=new Blob([$('htmlCode').value],{type:'text/html'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='nova-page.html';a.click();URL.revokeObjectURL(a.href)}
+
+const REAI_SYSTEM = "Tu es REAI, assistant spécialisé en cybersécurité défensive et reverse engineering autorisé. Tu aides à comprendre les exécutables, le code, les formats ELF/PE/Mach-O/APK, le désassemblage, la décompilation, le forensic, le triage de malware et les protocoles. Distingue toujours faits observés, hypothèses et limites. N'invente pas de résultat d'analyse et ne prétends pas avoir inspecté un fichier qui n'a pas été fourni. Travaille uniquement sur des systèmes et fichiers que l'utilisateur est autorisé à analyser. Réponds de façon concise, adaptée à un contexte mobile.";
+let reaiWllama = null;
+let reaiLoaded = false;
+const WLLAMA_VERSION = '3.13.0';
+function engineStatus(message,kind='warn'){const el=$('engineStatus');el.textContent=message;el.className='status '+kind;$('engineBadge').textContent=kind==='ok'?'Prêt':kind==='err'?'Erreur':'En attente'}
+async function checkGPU(){const el=$('gpuDiagnostic');if(!('gpu' in navigator)){el.textContent='WebGPU indisponible dans ce navigateur. Le mode GPU ne peut pas être confirmé.';el.className='status err';return false}try{const adapter=await navigator.gpu.requestAdapter({powerPreference:'low-power'});if(!adapter){el.textContent='Aucun adaptateur WebGPU accessible.';el.className='status err';return false}const info=adapter.info||{};el.textContent='WebGPU disponible. Adaptateur : '+(info.description||info.device||'non communiqué')+'. La disponibilité ne garantit pas que le chargement du modèle réussira.';el.className='status ok';return true}catch(e){el.textContent='Échec WebGPU : '+(e.message||e);el.className='status err';return false}}
+async function loadLocalModel(){const file=$('ggufFile').files[0];if(!file){alert('Sélectionne un fichier GGUF.');return}if(!file.name.toLowerCase().endsWith('.gguf')){alert('Le fichier doit être au format GGUF.');return}const max=500*1024*1024;if(file.size>max){alert('Modèle trop volumineux : maximum 500 Mio pour le profil iPhone SE.');return}const gpuOK=await checkGPU();if(!gpuOK){engineStatus('WebGPU indisponible : chargement GPU annulé. Aucune bascule CPU silencieuse.','err');return}const ctx=Number($('contextSize').value),layers=Number($('gpuLayers').value);$('loadModelBtn').disabled=true;engineStatus('Initialisation de Wllama '+WLLAMA_VERSION+' depuis le CDN… Internet requis pour cette première étape.');try{const base='https://cdn.jsdelivr.net/npm/@wllama/wllama@'+WLLAMA_VERSION+'/esm/';const [core,wasmMod]=await Promise.all([import(base+'index.js'),import(base+'wasm-from-cdn.js')]);const Wllama=core.Wllama;const WasmFromCDN=wasmMod.default;if(!Wllama||!WasmFromCDN)throw new Error('API Wllama introuvable dans le module téléchargé.');reaiWllama=new Wllama(WasmFromCDN);reaiWllama.setCompat('default');engineStatus('Chargement du modèle local '+file.name+' ('+(file.size/1048576).toFixed(0)+' Mio), contexte '+ctx+', '+layers+' couches GPU…');await reaiWllama.loadModel([file],{n_gpu_layers:layers,n_ctx:ctx,n_threads:1});reaiLoaded=true;engineStatus('Modèle chargé. Wllama a reçu la demande WebGPU. Vérifie la stabilité en conversation sur cet iPhone.','ok');$('unloadModelBtn').disabled=false;$('loadModelBtn').textContent='Modèle chargé'}catch(e){reaiWllama=null;reaiLoaded=false;engineStatus('Échec du chargement : '+(e?.message||String(e)),'err');alert('Impossible de charger le moteur/modèle : '+(e?.message||e))}finally{$('loadModelBtn').disabled=false}}
+async function unloadLocalModel(){if(reaiWllama){try{await reaiWllama.exit()}catch(e){} }reaiWllama=null;reaiLoaded=false;$('unloadModelBtn').disabled=true;$('loadModelBtn').textContent='Charger le modèle GPU';engineStatus('Modèle déchargé.','warn')}
+
+updateHome();drawAssistants();renderHTML();
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script></body></html>
